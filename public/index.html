@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Personal Expense Tracker</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #f4f6f8;
+            color: #1f2937;
+        }
+
+        .container {
+            max-width: 960px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+
+        header {
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            margin: 0 0 8px;
+            color: #111827;
+        }
+
+        .summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .card {
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 16px;
+            box-shadow: 0 1px 4px rgba(15, 23, 42, 0.08);
+        }
+
+        form {
+            display: grid;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        input,
+        select,
+        textarea,
+        button {
+            width: 100%;
+            padding: 10px 12px;
+            border-radius: 8px;
+            border: 1px solid #d1d5db;
+            font-size: 1rem;
+            box-sizing: border-box;
+        }
+
+        button {
+            border: none;
+            background: #2563eb;
+            color: white;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #1d4ed8;
+        }
+
+        .message {
+            min-height: 24px;
+            margin-bottom: 16px;
+            padding: 10px 12px;
+            border-radius: 8px;
+            display: none;
+        }
+
+        .message.visible {
+            display: block;
+        }
+
+        .message.success {
+            background: #ecfdf5;
+            color: #166534;
+            border: 1px solid #d1fae5;
+        }
+
+        .message.error {
+            background: #fef2f2;
+            color: #b91c1c;
+            border: 1px solid #fecaca;
+        }
+
+        .expense-list {
+            width: 100%;
+            border-collapse: collapse;
+            background: #ffffff;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 1px 4px rgba(15, 23, 42, 0.08);
+        }
+
+        .expense-list th,
+        .expense-list td {
+            padding: 12px 14px;
+            text-align: left;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .expense-list th {
+            background: #f9fafb;
+            font-weight: 600;
+        }
+
+        .expense-list tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .actions button {
+            width: auto;
+            padding: 8px 12px;
+            font-size: 0.95rem;
+        }
+
+        .actions button.delete {
+            background: #dc2626;
+        }
+
+        .actions button.delete:hover {
+            background: #b91c1c;
+        }
+
+        .actions button.edit {
+            background: #10b981;
+        }
+
+        .actions button.edit:hover {
+            background: #059669;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1>Personal Expense Tracker</h1>
+            <p>Track spending quickly with a simple local expense manager.</p>
+        </header>
+
+        <div class="summary">
+            <div class="card">
+                <strong>Total expenses</strong>
+                <div id="summaryCount">0</div>
+            </div>
+            <div class="card">
+                <strong>Total amount</strong>
+                <div id="summaryTotal">$0.00</div>
+            </div>
+        </div>
+
+        <div id="message" class="message"></div>
+
+        <div class="card">
+            <form id="expenseForm">
+                <input type="hidden" id="expenseId" />
+                <label>
+                    Description
+                    <input id="description" type="text" placeholder="Coffee, groceries, rent" required />
+                </label>
+                <label>
+                    Amount
+                    <input id="amount" type="number" step="0.01" placeholder="0.00" required />
+                </label>
+                <label>
+                    Date
+                    <input id="date" type="date" required />
+                </label>
+                <label>
+                    Category
+                    <input id="category" type="text" placeholder="Food, transport, utilities" required />
+                </label>
+                <label>
+                    Notes
+                    <textarea id="notes" rows="3" placeholder="Optional notes"></textarea>
+                </label>
+                <button type="submit" id="submitButton">Add expense</button>
+            </form>
+        </div>
+
+        <div class="card">
+            <h2>Expense list</h2>
+            <table class="expense-list" id="expenseTable">
+                <thead>
+                    <tr>
+                        <th>Description</th>
+                        <th>Amount</th>
+                        <th>Category</th>
+                        <th>Date</th>
+                        <th>Notes</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="expenseRows"></tbody>
+            </table>
+        </div>
+    </div>
+    <script src="app.js"></script>
+</body>
+
+</html>

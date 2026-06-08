@@ -1,0 +1,26 @@
+{
+    "name": "personal-expense-tracker",
+    "version": "1.0.0",
+    "description": "Local personal expense tracker with Node.js, Express, and SQLite.",
+    "main": "src/index.js",
+    "scripts": {
+        "start": "node src/index.js",
+        "dev": "nodemon src/index.js"
+    },
+    "keywords": [
+        "expense",
+        "tracker",
+        "sqlite",
+        "express"
+    ],
+    "author": "",
+    "license": "MIT",
+    "dependencies": {
+        "cors": "^2.8.5",
+        "express": "^4.18.2",
+        "sqlite3": "^5.1.4"
+    },
+    "devDependencies": {
+        "nodemon": "^3.0.1"
+    }
+}
