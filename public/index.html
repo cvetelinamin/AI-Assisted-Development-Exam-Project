@@ -27,6 +27,15 @@
         h1 {
             margin: 0 0 8px;
             color: #111827;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo {
+            width: 60px;
+            height: 60px;
+            flex-shrink: 0;
         }
 
         .summary {
@@ -153,7 +162,19 @@
 <body>
     <div class="container">
         <header>
-            <h1>Personal Expense Tracker</h1>
+            <h1>
+                <svg class="logo" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Wallet background -->
+                    <rect x="4" y="8" width="32" height="24" rx="2" fill="#2563eb" stroke="#1d4ed8"
+                        stroke-width="1.5" />
+                    <!-- Wallet flap -->
+                    <path d="M 4 8 Q 4 12 20 14 Q 36 12 36 8" fill="#3b82f6" stroke="#1d4ed8" stroke-width="1.5" />
+                    <!-- Dollar sign -->
+                    <text x="20" y="26" font-size="18" font-weight="bold" fill="white" text-anchor="middle"
+                        dominant-baseline="middle">$</text>
+                </svg>
+                Personal Expense Tracker
+            </h1>
             <p>Track spending quickly with a simple local expense manager.</p>
         </header>
 
