@@ -156,26 +156,77 @@
         .actions button.edit:hover {
             background: #059669;
         }
+
+        .header-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 12px;
+        }
+
+        .nav-links a {
+            padding: 8px 16px;
+            background: #2563eb;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            transition: background 0.3s;
+        }
+
+        .nav-links a:hover {
+            background: #1d4ed8;
+        }
+
+        @media (max-width: 600px) {
+            .header-nav {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .nav-links {
+                width: 100%;
+            }
+
+            .nav-links a {
+                flex: 1;
+                text-align: center;
+            }
+        }
     </style>
 </head>
 
 <body>
     <div class="container">
         <header>
-            <h1>
-                <svg class="logo" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
-                    <!-- Wallet background -->
-                    <rect x="4" y="8" width="32" height="24" rx="2" fill="#2563eb" stroke="#1d4ed8"
-                        stroke-width="1.5" />
-                    <!-- Wallet flap -->
-                    <path d="M 4 8 Q 4 12 20 14 Q 36 12 36 8" fill="#3b82f6" stroke="#1d4ed8" stroke-width="1.5" />
-                    <!-- Dollar sign -->
-                    <text x="20" y="26" font-size="18" font-weight="bold" fill="white" text-anchor="middle"
-                        dominant-baseline="middle">$</text>
-                </svg>
-                Personal Expense Tracker
-            </h1>
-            <p>Track spending quickly with a simple local expense manager.</p>
+            <div class="header-nav">
+                <div>
+                    <h1>
+                        <svg class="logo" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
+                            <!-- Wallet background -->
+                            <rect x="4" y="8" width="32" height="24" rx="2" fill="#2563eb" stroke="#1d4ed8"
+                                stroke-width="1.5" />
+                            <!-- Wallet flap -->
+                            <path d="M 4 8 Q 4 12 20 14 Q 36 12 36 8" fill="#3b82f6" stroke="#1d4ed8"
+                                stroke-width="1.5" />
+                            <!-- Dollar sign -->
+                            <text x="20" y="26" font-size="18" font-weight="bold" fill="white" text-anchor="middle"
+                                dominant-baseline="middle">$</text>
+                        </svg>
+                        Personal Expense Tracker
+                    </h1>
+                    <p>Track spending quickly with a simple local expense manager.</p>
+                </div>
+                <div class="nav-links">
+                    <a href="/">Expenses</a>
+                    <a href="/charts.html">📊 Analytics</a>
+                </div>
+            </div>
         </header>
 
         <div class="summary">
