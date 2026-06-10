@@ -1,42 +1,8 @@
 const express = require('express');
 const { getExpenses, getSummary, createExpense, updateExpense, deleteExpense } = require('../db');
+const { validateExpense } = require('../validators/expenseValidator');
 
 const router = express.Router();
-
-function isValidISODate(value) {
-    if (typeof value !== 'string') return false;
-    const date = new Date(value);
-    return !Number.isNaN(date.getTime()) && date.toISOString().startsWith(value);
-}
-
-function validateExpense(payload) {
-    const errors = [];
-
-    if (!payload || typeof payload !== 'object') {
-        errors.push('Payload must be a JSON object.');
-        return { valid: false, errors };
-    }
-
-    if (!payload.description || typeof payload.description !== 'string' || !payload.description.trim()) {
-        errors.push('Description is required.');
-    }
-
-    if (payload.amount === undefined || payload.amount === null || typeof payload.amount !== 'number' || Number.isNaN(payload.amount)) {
-        errors.push('Amount must be a number.');
-    } else if (payload.amount <= 0) {
-        errors.push('Amount must be a positive number.');
-    }
-
-    if (!payload.category || typeof payload.category !== 'string' || !payload.category.trim()) {
-        errors.push('Category is required.');
-    }
-
-    if (!payload.date || typeof payload.date !== 'string' || !isValidISODate(payload.date)) {
-        errors.push('Date is required and must be a valid ISO date string.');
-    }
-
-    return { valid: errors.length === 0, errors };
-}
 
 router.get('/', async (req, res) => {
     try {
@@ -59,7 +25,10 @@ router.get('/summary', async (req, res) => {
 router.post('/', async (req, res) => {
     const { valid, errors } = validateExpense(req.body);
     if (!valid) {
-        return res.status(400).json({ errors });
+        return res.status(400).json({
+            error: 'Validation failed',
+            details: errors,
+        });
     }
 
     try {
@@ -79,7 +48,10 @@ router.put('/:id', async (req, res) => {
 
     const { valid, errors } = validateExpense(req.body);
     if (!valid) {
-        return res.status(400).json({ errors });
+        return res.status(400).json({
+            error: 'Validation failed',
+            details: errors,
+        });
     }
 
     try {
