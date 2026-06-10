@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Personal Expense Tracker</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js"></script>
+    
+    <style>
+        :root {
+            --primary: #667eea;
+            --primary-dark: #5568d3;
+            --secondary: #764ba2;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --info: #3b82f6;
+            --light-bg: #f9fafb;
+            --border-color: #e5e7eb;
+            --text-primary: #1f2937;
+            --text-secondary: #6b7280;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            color: var(--text-primary);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .navbar {
+            background: white;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+            padding: 1rem 0;
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: var(--primary) !important;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .navbar-brand i {
+            font-size: 2rem;
+        }
+
+        .nav-link {
+            color: var(--text-secondary) !important;
+            font-weight: 500;
+            margin: 0 10px;
+            transition: color 0.3s;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            color: var(--primary) !important;
+        }
+
+        .page-header {
+            padding: 2rem 0;
+            margin-bottom: 2rem;
+        }
+
+        .page-header h1 {
+            font-weight: 700;
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+
+        .page-header p {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+            height: 100%;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-card-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .stat-card-icon.primary {
+            background: rgba(102, 126, 234, 0.1);
+            color: var(--primary);
+        }
+
+        .stat-card-icon.success {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+        }
+
+        .stat-card-icon.warning {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--warning);
+        }
+
+        .stat-card-icon.info {
+            background: rgba(59, 130, 246, 0.1);
+            color: var(--info);
+        }
+
+        .stat-label {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-value {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .chart-card {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+            border: 1px solid var(--border-color);
+            margin-bottom: 2rem;
+        }
+
+        .chart-card h5 {
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            color: var(--text-primary);
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin-bottom: 1rem;
+        }
+
+        .chart-container-medium {
+            position: relative;
+            height: 400px;
+            margin-bottom: 1rem;
+        }
+
+        .recent-expenses {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+        }
+
+        .recent-expenses-header {
+            padding: 2rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .recent-expenses-header h5 {
+            font-weight: 600;
+            margin: 0;
+            color: var(--text-primary);
+        }
+
+        .expense-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .expense-table tbody tr {
+            border-bottom: 1px solid var(--border-color);
+            transition: background-color 0.2s;
+        }
+
+        .expense-table tbody tr:hover {
+            background-color: var(--light-bg);
+        }
+
+        .expense-table td {
+            padding: 1.25rem 2rem;
+            vertical-align: middle;
+        }
+
+        .expense-table th {
+            padding: 1.25rem 2rem;
+            background-color: var(--light-bg);
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.5px;
+            color: var(--text-secondary);
+        }
+
+        .expense-category {
+            display: inline-block;
+            padding: 0.375rem 0.875rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            background-color: var(--light-bg);
+            color: var(--text-primary);
+        }
+
+        .expense-amount {
+            font-weight: 600;
+            color: var(--success);
+            font-size: 1rem;
+        }
+
+        .expense-date {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+
+        .loading-spinner {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 400px;
+        }
+
+        .spinner-border {
+            width: 50px;
+            height: 50px;
+        }
+
+        .error-alert {
+            display: none;
+            margin-bottom: 2rem;
+        }
+
+        .no-data-message {
+            text-align: center;
+            padding: 3rem 2rem;
+            color: var(--text-secondary);
+        }
+
+        .no-data-message i {
+            font-size: 3rem;
+            opacity: 0.5;
+            margin-bottom: 1rem;
+        }
+
+        footer {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-secondary);
+            margin-top: 4rem;
+            border-top: 1px solid var(--border-color);
+            background: white;
+        }
+
+        @media (max-width: 768px) {
+            .page-header h1 {
+                font-size: 1.75rem;
+            }
+
+            .chart-container,
+            .chart-container-medium {
+                height: 250px;
+            }
+
+            .stat-card {
+                padding: 1rem;
+            }
+
+            .expense-table td,
+            .expense-table th {
+                padding: 0.75rem;
+                font-size: 0.875rem;
+            }
+        }
+
+        .refresh-btn {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: white;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            transition: all 0.3s;
+            z-index: 100;
+        }
+
+        .refresh-btn:hover {
+            transform: scale(1.1) rotate(90deg);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.6);
+        }
+
+        .refresh-btn:active {
+            transform: scale(0.95);
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light sticky-top">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/">
+                <i class="bi bi-wallet2"></i>
+                Expense Tracker
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/dashboard.html">
+                            <i class="bi bi-graph-up"></i> Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">
+                            <i class="bi bi-list-check"></i> Expenses
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/charts.html">
+                            <i class="bi bi-pie-chart"></i> Analytics
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container-fluid py-4">
+        <!-- Page Header -->
+        <div class="page-header">
+            <h1><i class="bi bi-speedometer2"></i> Dashboard</h1>
+            <p>Your spending overview and analytics at a glance</p>
+        </div>
+
+        <!-- Error Alert -->
+        <div class="alert alert-danger error-alert" id="errorAlert" role="alert">
+            <i class="bi bi-exclamation-triangle"></i>
+            <span id="errorMessage"></span>
+        </div>
+
+        <!-- Statistics Cards -->
+        <div class="row mb-4" id="statsContainer">
+            <div class="col-md-6 col-lg-3 mb-4">
+                <div class="stat-card">
+                    <div class="stat-card-icon primary">
+                        <i class="bi bi-currency-dollar"></i>
+                    </div>
+                    <div class="stat-label">Total Spending</div>
+                    <div class="stat-value" id="totalSpending">$0.00</div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3 mb-4">
+                <div class="stat-card">
+                    <div class="stat-card-icon success">
+                        <i class="bi bi-receipt"></i>
+                    </div>
+                    <div class="stat-label">Total Expenses</div>
+                    <div class="stat-value" id="totalExpenses">0</div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3 mb-4">
+                <div class="stat-card">
+                    <div class="stat-card-icon warning">
+                        <i class="bi bi-graph-up"></i>
+                    </div>
+                    <div class="stat-label">Average Expense</div>
+                    <div class="stat-value" id="averageExpense">$0.00</div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3 mb-4">
+                <div class="stat-card">
+                    <div class="stat-card-icon info">
+                        <i class="bi bi-tag"></i>
+                    </div>
+                    <div class="stat-label">Top Category</div>
+                    <div class="stat-value" id="topCategory" style="font-size: 1.25rem;">-</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts Row -->
+        <div class="row mb-4">
+            <!-- Category Distribution Pie Chart -->
+            <div class="col-lg-4">
+                <div class="chart-card">
+                    <h5><i class="bi bi-pie-chart"></i> Category Distribution</h5>
+                    <div class="chart-container">
+                        <canvas id="categoryPieChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Monthly Spending Bar Chart -->
+            <div class="col-lg-8">
+                <div class="chart-card">
+                    <h5><i class="bi bi-bar-chart"></i> Monthly Spending</h5>
+                    <div class="chart-container-medium">
+                        <canvas id="monthlyBarChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Expenses Table -->
+        <div class="row">
+            <div class="col-12">
+                <div class="recent-expenses">
+                    <div class="recent-expenses-header">
+                        <h5>
+                            <i class="bi bi-clock-history"></i> Recent Expenses
+                        </h5>
+                    </div>
+                    <div id="recentExpensesContainer">
+                        <div class="loading-spinner">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Refresh Button -->
+    <button class="refresh-btn" id="refreshBtn" title="Refresh dashboard">
+        <i class="bi bi-arrow-clockwise"></i>
+    </button>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2024 Personal Expense Tracker. Track your expenses with ease.</p>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // Chart instances
+        let categoryPieChart = null;
+        let monthlyBarChart = null;
+
+        // Color palettes
+        const colors = {
+            pie: [
+                'rgba(102, 126, 234, 0.8)',
+                'rgba(118, 75, 162, 0.8)',
+                'rgba(16, 185, 129, 0.8)',
+                'rgba(245, 158, 11, 0.8)',
+                'rgba(59, 130, 246, 0.8)',
+                'rgba(239, 68, 68, 0.8)',
+                'rgba(168, 85, 247, 0.8)',
+                'rgba(6, 182, 212, 0.8)',
+            ],
+            pieBorder: [
+                'rgb(102, 126, 234)',
+                'rgb(118, 75, 162)',
+                'rgb(16, 185, 129)',
+                'rgb(245, 158, 11)',
+                'rgb(59, 130, 246)',
+                'rgb(239, 68, 68)',
+                'rgb(168, 85, 247)',
+                'rgb(6, 182, 212)',
+            ]
+        };
+
+        // Format currency
+        function formatCurrency(value) {
+            return new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD'
+            }).format(value);
+        }
+
+        // Show error
+        function showError(message) {
+            document.getElementById('errorMessage').textContent = message;
+            document.getElementById('errorAlert').style.display = 'block';
+            setTimeout(() => {
+                document.getElementById('errorAlert').style.display = 'none';
+            }, 5000);
+        }
+
+        // Update statistics
+        function updateStatistics(analytics) {
+            const summary = analytics.summary;
+            document.getElementById('totalSpending').textContent = formatCurrency(summary.totalSpending);
+            document.getElementById('totalExpenses').textContent = summary.expenseCount;
+            document.getElementById('averageExpense').textContent = formatCurrency(summary.averageExpense);
+            document.getElementById('topCategory').textContent = summary.highestSpendingCategory.category || '-';
+        }
+
+        // Render pie chart
+        function renderPieChart(analytics) {
+            const ctx = document.getElementById('categoryPieChart');
+            
+            if (categoryPieChart) {
+                categoryPieChart.destroy();
+            }
+
+            const categoryData = analytics.byCategory.spending;
+            const labels = Object.keys(categoryData);
+            const data = Object.values(categoryData);
+
+            categoryPieChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: data,
+                        backgroundColor: colors.pie.slice(0, labels.length),
+                        borderColor: colors.pieBorder.slice(0, labels.length),
+                        borderWidth: 2,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                padding: 15,
+                                font: { size: 12, weight: 'bold' },
+                                usePointStyle: true
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const percentage = analytics.byCategory.percentages[context.label] || 0;
+                                    return `${context.label}: ${formatCurrency(context.parsed.y)} (${percentage}%)`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Render monthly bar chart
+        function renderMonthlyChart(analytics) {
+            const ctx = document.getElementById('monthlyBarChart');
+            
+            if (monthlyBarChart) {
+                monthlyBarChart.destroy();
+            }
+
+            const monthlyData = analytics.monthly;
+            const months = Object.keys(monthlyData).sort();
+            const data = months.map(m => monthlyData[m]);
+
+            monthlyBarChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: months.map(m => {
+                        const [year, month] = m.split('-');
+                        return new Date(year, month - 1).toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+                    }),
+                    datasets: [{
+                        label: 'Monthly Spending',
+                        data: data,
+                        backgroundColor: 'rgba(102, 126, 234, 0.7)',
+                        borderColor: 'rgb(102, 126, 234)',
+                        borderWidth: 2,
+                        borderRadius: 6,
+                        hoverBackgroundColor: 'rgba(102, 126, 234, 0.9)',
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: true,
+                            labels: {
+                                font: { size: 12, weight: 'bold' }
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `Spending: ${formatCurrency(context.parsed.y)}`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return formatCurrency(value);
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Render recent expenses table
+        async function renderRecentExpenses() {
+            try {
+                const response = await fetch('/api/expenses');
+                if (!response.ok) throw new Error('Failed to fetch expenses');
+                
+                const expenses = await response.json();
+                const recent = expenses.slice(-10).reverse();
+
+                if (recent.length === 0) {
+                    document.getElementById('recentExpensesContainer').innerHTML = 
+                        '<div class="no-data-message"><i class="bi bi-inbox"></i><p>No expenses yet</p></div>';
+                    return;
+                }
+
+                let html = `
+                    <table class="expense-table">
+                        <thead>
+                            <tr>
+                                <th>Description</th>
+                                <th>Category</th>
+                                <th>Date</th>
+                                <th style="text-align: right;">Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                `;
+
+                recent.forEach(expense => {
+                    const date = new Date(expense.date).toLocaleDateString('en-US', { 
+                        month: 'short', 
+                        day: 'numeric', 
+                        year: 'numeric' 
+                    });
+                    
+                    html += `
+                        <tr>
+                            <td>${expense.description || '-'}</td>
+                            <td><span class="expense-category">${expense.category}</span></td>
+                            <td><span class="expense-date">${date}</span></td>
+                            <td style="text-align: right;"><span class="expense-amount">${formatCurrency(expense.amount)}</span></td>
+                        </tr>
+                    `;
+                });
+
+                html += '</tbody></table>';
+                document.getElementById('recentExpensesContainer').innerHTML = html;
+            } catch (error) {
+                showError('Failed to load recent expenses');
+                console.error('Error:', error);
+            }
+        }
+
+        // Load dashboard data
+        async function loadDashboard() {
+            try {
+                const response = await fetch('/api/analytics/summary');
+                if (!response.ok) throw new Error('Failed to fetch analytics');
+                
+                const analytics = await response.json();
+                
+                if (!analytics.summary || analytics.summary.expenseCount === 0) {
+                    document.getElementById('recentExpensesContainer').innerHTML = 
+                        '<div class="no-data-message"><i class="bi bi-inbox"></i><p>No expenses yet. Start by adding your first expense!</p></div>';
+                    document.getElementById('statsContainer').innerHTML = 
+                        '<div class="col-12 no-data-message"><p>No data available</p></div>';
+                    return;
+                }
+
+                updateStatistics(analytics);
+                renderPieChart(analytics);
+                renderMonthlyChart(analytics);
+                await renderRecentExpenses();
+            } catch (error) {
+                showError('Unable to load dashboard data: ' + error.message);
+                console.error('Error:', error);
+            }
+        }
+
+        // Refresh button
+        document.getElementById('refreshBtn').addEventListener('click', () => {
+            loadDashboard();
+        });
+
+        // Load on page load
+        document.addEventListener('DOMContentLoaded', loadDashboard);
+    </script>
+</body>
+</html>
